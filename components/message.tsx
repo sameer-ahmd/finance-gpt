@@ -23,6 +23,7 @@ import { MessageActions } from "./message-actions";
 import { MessageEditor } from "./message-editor";
 import { MessageReasoning } from "./message-reasoning";
 import { PreviewAttachment } from "./preview-attachment";
+import { FinancialData } from "./financial-data";
 import { Weather } from "./weather";
 
 const PurePreviewMessage = ({
@@ -179,6 +180,27 @@ const PurePreviewMessage = ({
                       <ToolOutput
                         errorText={undefined}
                         output={<Weather weatherAtLocation={part.output} />}
+                      />
+                    )}
+                  </ToolContent>
+                </Tool>
+              );
+            }
+
+            if (type === "tool-getIncomeStatement") {
+              const { toolCallId, state } = part;
+
+              return (
+                <Tool defaultOpen={true} key={toolCallId}>
+                  <ToolHeader state={state} type="tool-getIncomeStatement" />
+                  <ToolContent>
+                    {state === "input-available" && (
+                      <ToolInput input={part.input} />
+                    )}
+                    {state === "output-available" && (
+                      <ToolOutput
+                        errorText={part.errorText}
+                        output={<FinancialData financialData={part.output} />}
                       />
                     )}
                   </ToolContent>
