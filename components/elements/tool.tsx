@@ -66,6 +66,8 @@ const getToolDisplayName = (type: ToolUIPart["type"]) => {
       return "Weather Data";
     case "tool-getIncomeStatement":
       return "Income Statement";
+    case "tool-getEarningsTranscript":
+      return "Earnings Call Transcript";
     case "tool-createDocument":
       return "Create Document";
     case "tool-updateDocument":

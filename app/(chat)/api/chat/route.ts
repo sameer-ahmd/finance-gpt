@@ -23,6 +23,7 @@ import type { ChatModel } from "@/lib/ai/models";
 import { type RequestHints, systemPrompt } from "@/lib/ai/prompts";
 import { myProvider } from "@/lib/ai/providers";
 import { createDocument } from "@/lib/ai/tools/create-document";
+import { getEarningsTranscript } from "@/lib/ai/tools/get-earnings-transcript";
 import { getIncomeStatement } from "@/lib/ai/tools/get-income-statement";
 import { getWeather } from "@/lib/ai/tools/get-weather";
 import { requestSuggestions } from "@/lib/ai/tools/request-suggestions";
@@ -187,6 +188,7 @@ export async function POST(request: Request) {
               : [
                   "getWeather",
                   "getIncomeStatement",
+                  "getEarningsTranscript",
                   "createDocument",
                   "updateDocument",
                   "requestSuggestions",
@@ -195,6 +197,7 @@ export async function POST(request: Request) {
           tools: {
             getWeather,
             getIncomeStatement,
+            getEarningsTranscript,
             createDocument: createDocument({ session, dataStream }),
             updateDocument: updateDocument({ session, dataStream }),
             requestSuggestions: requestSuggestions({
