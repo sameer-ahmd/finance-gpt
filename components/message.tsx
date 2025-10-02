@@ -188,7 +188,7 @@ const PurePreviewMessage = ({
               const { toolCallId, state } = part;
 
               return (
-                <Tool defaultOpen={true} key={toolCallId}>
+                <Tool defaultOpen={false} key={toolCallId}>
                   <ToolHeader state={state} type="tool-getIncomeStatement" />
                   <ToolContent>
                     {state === "input-available" && (
@@ -375,7 +375,7 @@ const PurePreviewMessage = ({
               const { toolCallId, state } = part;
 
               return (
-                <Tool defaultOpen={true} key={toolCallId}>
+                <Tool defaultOpen={false} key={toolCallId}>
                   <ToolHeader state={state} type="tool-searchCompany" />
                   <ToolContent>
                     {state === "input-available" && (
@@ -401,7 +401,7 @@ const PurePreviewMessage = ({
               const { toolCallId, state } = part;
 
               return (
-                <Tool defaultOpen={true} key={toolCallId}>
+                <Tool defaultOpen={false} key={toolCallId}>
                   <ToolHeader state={state} type="tool-getCompanyProfile" />
                   <ToolContent>
                     {state === "input-available" && (
@@ -450,7 +450,7 @@ const PurePreviewMessage = ({
               const { toolCallId, state } = part;
 
               return (
-                <Tool defaultOpen={true} key={toolCallId}>
+                <Tool defaultOpen={false} key={toolCallId}>
                   <ToolHeader state={state} type="tool-getIncomeStatementFMP" />
                   <ToolContent>
                     {state === "input-available" && (
@@ -477,7 +477,7 @@ const PurePreviewMessage = ({
               const { toolCallId, state } = part;
 
               return (
-                <Tool defaultOpen={true} key={toolCallId}>
+                <Tool defaultOpen={false} key={toolCallId}>
                   <ToolHeader state={state} type="tool-getBalanceSheet" />
                   <ToolContent>
                     {state === "input-available" && (
@@ -504,7 +504,7 @@ const PurePreviewMessage = ({
               const { toolCallId, state } = part;
 
               return (
-                <Tool defaultOpen={true} key={toolCallId}>
+                <Tool defaultOpen={false} key={toolCallId}>
                   <ToolHeader state={state} type="tool-getCashFlow" />
                   <ToolContent>
                     {state === "input-available" && (
@@ -531,7 +531,7 @@ const PurePreviewMessage = ({
               const { toolCallId, state } = part;
 
               return (
-                <Tool defaultOpen={true} key={toolCallId}>
+                <Tool defaultOpen={false} key={toolCallId}>
                   <ToolHeader state={state} type="tool-getRatios" />
                   <ToolContent>
                     {state === "input-available" && (
@@ -558,7 +558,7 @@ const PurePreviewMessage = ({
               const { toolCallId, state } = part;
 
               return (
-                <Tool defaultOpen={true} key={toolCallId}>
+                <Tool defaultOpen={false} key={toolCallId}>
                   <ToolHeader state={state} type="tool-getKeyMetrics" />
                   <ToolContent>
                     {state === "input-available" && (
@@ -585,7 +585,7 @@ const PurePreviewMessage = ({
               const { toolCallId, state } = part;
 
               return (
-                <Tool defaultOpen={true} key={toolCallId}>
+                <Tool defaultOpen={false} key={toolCallId}>
                   <ToolHeader state={state} type="tool-getEnterpriseValues" />
                   <ToolContent>
                     {state === "input-available" && (
@@ -612,7 +612,7 @@ const PurePreviewMessage = ({
               const { toolCallId, state } = part;
 
               return (
-                <Tool defaultOpen={true} key={toolCallId}>
+                <Tool defaultOpen={false} key={toolCallId}>
                   <ToolHeader state={state} type="tool-getSharesOutstanding" />
                   <ToolContent>
                     {state === "input-available" && (
@@ -639,7 +639,7 @@ const PurePreviewMessage = ({
               const { toolCallId, state } = part;
 
               return (
-                <Tool defaultOpen={true} key={toolCallId}>
+                <Tool defaultOpen={false} key={toolCallId}>
                   <ToolHeader state={state} type="tool-getEarningsCalendar" />
                   <ToolContent>
                     {state === "input-available" && (
@@ -666,7 +666,7 @@ const PurePreviewMessage = ({
               const { toolCallId, state } = part;
 
               return (
-                <Tool defaultOpen={true} key={toolCallId}>
+                <Tool defaultOpen={false} key={toolCallId}>
                   <ToolHeader state={state} type="tool-getFilings" />
                   <ToolContent>
                     {state === "input-available" && (
@@ -693,7 +693,7 @@ const PurePreviewMessage = ({
               const { toolCallId, state } = part;
 
               return (
-                <Tool defaultOpen={true} key={toolCallId}>
+                <Tool defaultOpen={false} key={toolCallId}>
                   <ToolHeader state={state} type="tool-getDividends" />
                   <ToolContent>
                     {state === "input-available" && (
