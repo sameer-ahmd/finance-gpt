@@ -1,7 +1,8 @@
 import type { InferUITool, UIMessage } from "ai";
 import { z } from "zod";
 import type { ArtifactKind } from "@/components/artifact";
-import type { calculateCAGRTool } from "./ai/tools/calculate-cagr";
+import type { calculateCAGRTool } from "./ai/tools/kpi/calculate-cagr";
+import type { calculateKPITool } from "./ai/tools/kpi/calculate-kpi";
 import type { createDocument } from "./ai/tools/create-document";
 import type { getEarningsTranscript } from "./ai/tools/get-earnings-transcript";
 import type { getIncomeStatement } from "./ai/tools/get-income-statement";
@@ -23,6 +24,7 @@ type weatherTool = InferUITool<typeof getWeather>;
 type incomeStatementTool = InferUITool<typeof getIncomeStatement>;
 type earningsTranscriptTool = InferUITool<typeof getEarningsTranscript>;
 type calculateCAGRToolType = InferUITool<typeof calculateCAGRTool>;
+type calculateKPIToolType = InferUITool<typeof calculateKPITool>;
 type createDocumentTool = InferUITool<ReturnType<typeof createDocument>>;
 type updateDocumentTool = InferUITool<ReturnType<typeof updateDocument>>;
 type requestSuggestionsTool = InferUITool<
@@ -34,6 +36,7 @@ export type ChatTools = {
   getIncomeStatement: incomeStatementTool;
   getEarningsTranscript: earningsTranscriptTool;
   calculateCAGRTool: calculateCAGRToolType;
+  calculateKPITool: calculateKPIToolType;
   createDocument: createDocumentTool;
   updateDocument: updateDocumentTool;
   requestSuggestions: requestSuggestionsTool;

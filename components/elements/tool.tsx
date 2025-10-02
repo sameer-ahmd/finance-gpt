@@ -70,6 +70,8 @@ const getToolDisplayName = (type: ToolUIPart["type"]) => {
       return "Earnings Call Transcript";
     case "tool-calculateCAGRTool":
       return "CAGR Analysis";
+    case "tool-calculateKPITool":
+      return "KPI Calculation";
     case "tool-createDocument":
       return "Create Document";
     case "tool-updateDocument":

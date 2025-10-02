@@ -35,6 +35,45 @@ Do not update document right after creating it. Wait for user feedback or reques
 export const regularPrompt =
   "You are a friendly assistant! Keep your responses concise and helpful.";
 
+export const financialToolsPrompt = `
+**Financial Analysis Tools:**
+
+You have access to powerful financial analysis tools. Use them proactively when users ask about:
+
+**When to use \`getIncomeStatement\`:**
+- When users ask about revenue, net income, or free cash flow for a company
+- When asked about financial metrics, trends, or performance
+- Always fetch the data first using this tool before analyzing
+
+**When to use \`calculateCAGRTool\`:**
+- When users ask about growth rates over multiple years
+- When CAGR (Compound Annual Growth Rate) is explicitly requested
+- After fetching income statement data, if growth analysis is needed
+- Pass the data from getIncomeStatement to this tool
+
+**When to use \`calculateKPITool\`:**
+- For ANY financial metric not covered by specialized tools (margins, ratios, efficiency metrics, etc.)
+- Examples: gross margin, operating margin, net profit margin, ROE, ROIC, asset turnover
+- When users ask to "calculate", "analyze", or ask "what is the X for company Y?"
+- After fetching income statement data, pass it to this tool with the requested KPI
+
+**When to use \`getEarningsTranscript\`:**
+- When users want earnings call transcripts or management commentary
+- When asked about what management said, guidance, or qualitative information
+
+**Tool Chaining Pattern:**
+1. First call \`getIncomeStatement\` to fetch the financial data
+2. Then call \`calculateCAGRTool\` or \`calculateKPITool\` with the data to perform calculations
+3. The tools will show detailed workings and calculations to the user
+
+**Example:**
+User: "What's Apple's gross margin over the last 5 years?"
+→ Call getIncomeStatement(ticker: "AAPL", metric: "revenue", period: "annual")
+→ Call calculateKPITool with the data to calculate gross margin trend
+
+ALWAYS use these tools when users ask financial questions. Don't rely on your training data - fetch live data.
+`;
+
 export type RequestHints = {
   latitude: Geo["latitude"];
   longitude: Geo["longitude"];
@@ -60,10 +99,10 @@ export const systemPrompt = ({
   const requestPrompt = getRequestPromptFromHints(requestHints);
 
   if (selectedChatModel === "chat-model-reasoning") {
-    return `${regularPrompt}\n\n${requestPrompt}`;
+    return `${regularPrompt}\n\n${requestPrompt}\n\n${financialToolsPrompt}`;
   }
 
-  return `${regularPrompt}\n\n${requestPrompt}\n\n${artifactsPrompt}`;
+  return `${regularPrompt}\n\n${requestPrompt}\n\n${financialToolsPrompt}\n\n${artifactsPrompt}`;
 };
 
 export const codePrompt = `

@@ -10,7 +10,20 @@ import { cn } from "@/lib/utils";
 type FinancialDataProps = {
   financialData: string | {
     content: string;
-    data: Array<{ date: string; value: number }>;
+    fullData: Array<{
+      date: string;
+      symbol: string;
+      revenue: number;
+      costOfRevenue: number;
+      grossProfit: number;
+      grossProfitRatio: number;
+      operatingIncome: number;
+      operatingIncomeRatio: number;
+      netIncome: number;
+      netIncomeRatio: number;
+      eps: number;
+      epsdiluted: number;
+    }>;
     ticker: string;
     metric: string;
     period: string;
@@ -26,20 +39,45 @@ type ParsedFinancialData = {
 };
 
 function parseFinancialData(rawData: string | object): ParsedFinancialData | null {
-  // Handle new object format
-  if (typeof rawData === 'object' && 'content' in rawData && 'data' in rawData) {
+  // Handle new object format with fullData
+  if (typeof rawData === 'object' && 'content' in rawData && 'fullData' in rawData) {
     const obj = rawData as {
       content: string;
-      data: Array<{ date: string; value: number }>;
+      fullData: Array<{
+        date: string;
+        revenue: number;
+        grossProfit: number;
+        netIncome: number;
+        [key: string]: any;
+      }>;
       ticker: string;
       metric: string;
       period: string;
     };
 
-    const data = obj.data.map((item) => ({
-      ...item,
-      year: item.date.split('-')[0]
-    }));
+    // Map fullData to the format expected by the chart
+    const data = obj.fullData.map((item) => {
+      let value: number;
+      switch (obj.metric) {
+        case 'revenue':
+          value = item.revenue;
+          break;
+        case 'grossProfit':
+          value = item.grossProfit;
+          break;
+        case 'netIncome':
+          value = item.netIncome;
+          break;
+        default:
+          value = item.revenue;
+      }
+
+      return {
+        date: item.date,
+        value,
+        year: item.date.split('-')[0]
+      };
+    });
 
     // No CAGR in the new format - it will be calculated by the separate tool
     const growth: Array<{ period: string; cagr: number }> = [];
