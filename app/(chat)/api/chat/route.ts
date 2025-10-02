@@ -22,6 +22,7 @@ import { entitlementsByUserType } from "@/lib/ai/entitlements";
 import type { ChatModel } from "@/lib/ai/models";
 import { type RequestHints, systemPrompt } from "@/lib/ai/prompts";
 import { myProvider } from "@/lib/ai/providers";
+import { calculateCAGRTool } from "@/lib/ai/tools/calculate-cagr";
 import { createDocument } from "@/lib/ai/tools/create-document";
 import { getEarningsTranscript } from "@/lib/ai/tools/get-earnings-transcript";
 import { getIncomeStatement } from "@/lib/ai/tools/get-income-statement";
@@ -189,6 +190,7 @@ export async function POST(request: Request) {
                   "getWeather",
                   "getIncomeStatement",
                   "getEarningsTranscript",
+                  "calculateCAGRTool",
                   "createDocument",
                   "updateDocument",
                   "requestSuggestions",
@@ -198,6 +200,7 @@ export async function POST(request: Request) {
             getWeather,
             getIncomeStatement,
             getEarningsTranscript,
+            calculateCAGRTool,
             createDocument: createDocument({ session, dataStream }),
             updateDocument: updateDocument({ session, dataStream }),
             requestSuggestions: requestSuggestions({

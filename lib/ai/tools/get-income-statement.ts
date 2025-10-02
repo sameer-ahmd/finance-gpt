@@ -40,18 +40,6 @@ class FMPDataSource implements FinancialDataSource {
 // Active data source
 const dataSource: FinancialDataSource = new FMPDataSource();
 
-// Helper function to calculate CAGR
-function calculateCAGR(series: Array<{ date: string; value: number }>, horizons: number[]): string {
-  return horizons.map(h => {
-    if (series.length < h) return `${h}y: N/A`;
-    const start = series[series.length - h - 1]?.value;
-    const end = series[series.length - 1]?.value;
-    if (!start || !end || start <= 0) return `${h}y: N/A`;
-    const cagr = ((end / start) ** (1 / h) - 1) * 100;
-    return `${h}y CAGR: ${cagr.toFixed(1)}%`;
-  }).join(" • ");
-}
-
 // Helper function to format data as markdown table
 function formatAsTable(series: Array<{ date: string; value: number }>, metric: string): string {
   return [
@@ -62,23 +50,34 @@ function formatAsTable(series: Array<{ date: string; value: number }>, metric: s
 }
 
 export const getIncomeStatement = tool({
-  description: "Fetch financial data from Financial Modeling Prep (FMP) and compute growth metrics for stocks",
+  description: "Fetch financial data (revenue, net income, free cash flow) from Financial Modeling Prep for a stock ticker. Returns time series data that can be used for further analysis like CAGR calculations.",
   inputSchema: z.object({
     ticker: z.string().describe("Stock ticker symbol (e.g., AAPL, MSFT)"),
     metric: z.enum(["revenue", "netIncome", "freeCashFlow"]).describe("Financial metric to retrieve"),
     period: z.enum(["annual", "quarterly"]).optional().default("annual").describe("Time period for data"),
-    horizons: z.array(z.number()).optional().describe("Years for CAGR calculation (e.g., [3, 5, 10])"),
   }),
-  execute: async ({ ticker, metric, period, horizons = [] }) => {
+  execute: async ({ ticker, metric, period }) => {
     try {
       const series = await dataSource.fetchIncomeStatement(ticker, metric, period);
 
       const table = formatAsTable(series, metric);
-      const growthSummary = horizons.length > 0 ? calculateCAGR(series, horizons) : "";
 
-      return `**${ticker} ${metric} (${period})**\n\n${table}\n\n${growthSummary ? `\n${growthSummary}` : ""}`;
+      // Return both formatted table and raw series data for potential tool chaining
+      return {
+        content: `**${ticker} ${metric} (${period})**\n\n${table}`,
+        data: series,
+        ticker,
+        metric,
+        period,
+      };
     } catch (error) {
-      return `Error fetching financial data for ${ticker}: ${error instanceof Error ? error.message : "Unknown error"}`;
+      return {
+        content: `Error fetching financial data for ${ticker}: ${error instanceof Error ? error.message : "Unknown error"}`,
+        data: [],
+        ticker,
+        metric,
+        period,
+      };
     }
   },
 });

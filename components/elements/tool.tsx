@@ -68,6 +68,8 @@ const getToolDisplayName = (type: ToolUIPart["type"]) => {
       return "Income Statement";
     case "tool-getEarningsTranscript":
       return "Earnings Call Transcript";
+    case "tool-calculateCAGRTool":
+      return "CAGR Analysis";
     case "tool-createDocument":
       return "Create Document";
     case "tool-updateDocument":

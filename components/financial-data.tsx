@@ -8,7 +8,13 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { cn } from "@/lib/utils";
 
 type FinancialDataProps = {
-  financialData: string;
+  financialData: string | {
+    content: string;
+    data: Array<{ date: string; value: number }>;
+    ticker: string;
+    metric: string;
+    period: string;
+  };
 };
 
 type ParsedFinancialData = {
@@ -19,7 +25,30 @@ type ParsedFinancialData = {
   growth: Array<{ period: string; cagr: number }>;
 };
 
-function parseFinancialData(rawData: string): ParsedFinancialData | null {
+function parseFinancialData(rawData: string | object): ParsedFinancialData | null {
+  // Handle new object format
+  if (typeof rawData === 'object' && 'content' in rawData && 'data' in rawData) {
+    const obj = rawData as {
+      content: string;
+      data: Array<{ date: string; value: number }>;
+      ticker: string;
+      metric: string;
+      period: string;
+    };
+
+    const data = obj.data.map((item) => ({
+      ...item,
+      year: item.date.split('-')[0]
+    }));
+
+    // No CAGR in the new format - it will be calculated by the separate tool
+    const growth: Array<{ period: string; cagr: number }> = [];
+
+    return { ticker: obj.ticker, metric: obj.metric, period: obj.period, data, growth };
+  }
+
+  // Handle legacy string format
+  if (typeof rawData !== 'string') return null;
   try {
     // Extract ticker and metric from the header
     const headerMatch = rawData.match(/\*\*([A-Z]+)\s+(\w+)\s+\((\w+)\)\*\*/);
@@ -90,14 +119,14 @@ function formatChartValue(value: number): string {
 
 export function FinancialData({ financialData }: FinancialDataProps) {
   const parsedData = useMemo(() => parseFinancialData(financialData), [financialData]);
-  
+
   if (!parsedData) {
     // Fallback to raw markdown display
     return (
       <Card className="max-w-[600px]">
         <CardContent className="p-4">
           <div className="whitespace-pre-wrap font-mono text-sm">
-            {financialData}
+            {typeof financialData === 'string' ? financialData : financialData.content}
           </div>
         </CardContent>
       </Card>
