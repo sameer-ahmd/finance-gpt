@@ -9,7 +9,7 @@ export type ChatModel = {
 export const chatModels: ChatModel[] = [
   {
     id: "chat-model",
-    name: "GPT-5",
-    description: "OpenAI's latest flagship model with advanced capabilities",
+    name: "FinSight Pro",
+    description: "Advanced AI model specialized in financial analysis and market insights",
   },
 ];
