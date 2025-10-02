@@ -7,9 +7,31 @@ import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://chat.vercel.ai"),
-  title: "Next.js Chatbot Template",
-  description: "Next.js chatbot template using the AI SDK.",
+  metadataBase: new URL("https://finsight.studio"),
+  title: {
+    default: "FinSight - AI-Powered Financial Analysis",
+    template: "%s | FinSight"
+  },
+  description: "Analyze company financials, calculate KPIs, and get real-time market insights with FinSight's AI-powered financial analysis chatbot. Access income statements, balance sheets, cash flows, and more.",
+  keywords: ["financial analysis", "stock analysis", "company financials", "AI chatbot", "market data", "financial ratios", "earnings analysis", "investment research"],
+  authors: [{ name: "FinSight" }],
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://finsight.studio",
+    title: "FinSight - AI-Powered Financial Analysis",
+    description: "Analyze company financials, calculate KPIs, and get real-time market insights with AI-powered financial analysis.",
+    siteName: "FinSight",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "FinSight - AI-Powered Financial Analysis",
+    description: "Analyze company financials, calculate KPIs, and get real-time market insights with AI-powered financial analysis.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export const viewport = {
