@@ -95,6 +95,31 @@ const getToolDisplayName = (type: ToolUIPart["type"]) => {
       return "Update Document";
     case "tool-requestSuggestions":
       return "Request Suggestions";
+    // FMP API Tools
+    case "tool-searchCompany":
+      return "Company Search";
+    case "tool-getCompanyProfile":
+      return "Company Profile";
+    case "tool-getIncomeStatementFMP":
+      return "Income Statement";
+    case "tool-getBalanceSheet":
+      return "Balance Sheet";
+    case "tool-getCashFlow":
+      return "Cash Flow Statement";
+    case "tool-getRatios":
+      return "Financial Ratios";
+    case "tool-getKeyMetrics":
+      return "Key Metrics";
+    case "tool-getEnterpriseValues":
+      return "Enterprise Values";
+    case "tool-getSharesOutstanding":
+      return "Shares Outstanding";
+    case "tool-getEarningsCalendar":
+      return "Earnings Calendar";
+    case "tool-getFilings":
+      return "SEC Filings";
+    case "tool-getDividends":
+      return "Dividend History";
     default:
       return type;
   }

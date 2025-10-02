@@ -30,6 +30,20 @@ import { getIncomeStatement } from "@/lib/ai/tools/get-income-statement";
 import { getWeather } from "@/lib/ai/tools/get-weather";
 import { requestSuggestions } from "@/lib/ai/tools/request-suggestions";
 import { updateDocument } from "@/lib/ai/tools/update-document";
+import {
+  searchCompany,
+  getCompanyProfile,
+  getIncomeStatement as getIncomeStatementFMP,
+  getBalanceSheet,
+  getCashFlow,
+  getRatios,
+  getKeyMetrics,
+  getEnterpriseValues,
+  getSharesOutstanding,
+  getEarningsCalendar,
+  getFilings,
+  getDividends,
+} from "@/lib/ai/tools/fmp";
 import { isProductionEnvironment } from "@/lib/constants";
 import {
   createStreamId,
@@ -196,6 +210,18 @@ export async function POST(request: Request) {
                   "createDocument",
                   "updateDocument",
                   "requestSuggestions",
+                  "searchCompany",
+                  "getCompanyProfile",
+                  "getIncomeStatementFMP",
+                  "getBalanceSheet",
+                  "getCashFlow",
+                  "getRatios",
+                  "getKeyMetrics",
+                  "getEnterpriseValues",
+                  "getSharesOutstanding",
+                  "getEarningsCalendar",
+                  "getFilings",
+                  "getDividends",
                 ],
           experimental_transform: smoothStream({ chunking: "word" }),
           tools: {
@@ -210,6 +236,18 @@ export async function POST(request: Request) {
               session,
               dataStream,
             }),
+            searchCompany,
+            getCompanyProfile,
+            getIncomeStatementFMP,
+            getBalanceSheet,
+            getCashFlow,
+            getRatios,
+            getKeyMetrics,
+            getEnterpriseValues,
+            getSharesOutstanding,
+            getEarningsCalendar,
+            getFilings,
+            getDividends,
           },
           experimental_telemetry: {
             isEnabled: isProductionEnvironment,

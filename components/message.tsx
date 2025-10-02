@@ -25,6 +25,8 @@ import { MessageReasoning } from "./message-reasoning";
 import { PreviewAttachment } from "./preview-attachment";
 import { FinancialData } from "./financial-data";
 import { Weather } from "./weather";
+import { Table } from "./Table";
+import { MetricTile } from "./MetricTile";
 
 const PurePreviewMessage = ({
   chatId,
@@ -350,6 +352,357 @@ const PurePreviewMessage = ({
                               result={part.output}
                               type="request-suggestions"
                             />
+                          )
+                        }
+                      />
+                    )}
+                  </ToolContent>
+                </Tool>
+              );
+            }
+
+            if (type === "tool-searchCompany") {
+              const { toolCallId, state } = part;
+
+              return (
+                <Tool defaultOpen={true} key={toolCallId}>
+                  <ToolHeader state={state} type="tool-searchCompany" />
+                  <ToolContent>
+                    {state === "input-available" && (
+                      <ToolInput input={part.input} />
+                    )}
+                    {state === "output-available" && (
+                      <ToolOutput
+                        errorText={part.errorText}
+                        output={
+                          <Table
+                            data={part.output.results || []}
+                            caption={`Search results for "${part.output.query}"`}
+                          />
+                        }
+                      />
+                    )}
+                  </ToolContent>
+                </Tool>
+              );
+            }
+
+            if (type === "tool-getCompanyProfile") {
+              const { toolCallId, state } = part;
+
+              return (
+                <Tool defaultOpen={true} key={toolCallId}>
+                  <ToolHeader state={state} type="tool-getCompanyProfile" />
+                  <ToolContent>
+                    {state === "input-available" && (
+                      <ToolInput input={part.input} />
+                    )}
+                    {state === "output-available" && (
+                      <ToolOutput
+                        errorText={part.errorText}
+                        output={
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                              <MetricTile
+                                label="Price"
+                                value={part.output.price}
+                                format="currency"
+                              />
+                              <MetricTile
+                                label="Market Cap"
+                                value={part.output.marketCap}
+                                format="currency"
+                              />
+                              <MetricTile
+                                label="Sector"
+                                value={part.output.sector}
+                                format="text"
+                              />
+                              <MetricTile
+                                label="Industry"
+                                value={part.output.industry}
+                                format="text"
+                              />
+                            </div>
+                            <div className="prose prose-sm max-w-none dark:prose-invert">
+                              <p className="text-sm text-gray-700">{part.output.description}</p>
+                            </div>
+                          </div>
+                        }
+                      />
+                    )}
+                  </ToolContent>
+                </Tool>
+              );
+            }
+
+            if (type === "tool-getIncomeStatementFMP") {
+              const { toolCallId, state } = part;
+
+              return (
+                <Tool defaultOpen={true} key={toolCallId}>
+                  <ToolHeader state={state} type="tool-getIncomeStatementFMP" />
+                  <ToolContent>
+                    {state === "input-available" && (
+                      <ToolInput input={part.input} />
+                    )}
+                    {state === "output-available" && (
+                      <ToolOutput
+                        errorText={part.errorText}
+                        output={
+                          <Table
+                            data={part.output.rows || []}
+                            caption={`${part.output.symbol} Income Statement (${part.output.period})`}
+                            maxRows={8}
+                          />
+                        }
+                      />
+                    )}
+                  </ToolContent>
+                </Tool>
+              );
+            }
+
+            if (type === "tool-getBalanceSheet") {
+              const { toolCallId, state } = part;
+
+              return (
+                <Tool defaultOpen={true} key={toolCallId}>
+                  <ToolHeader state={state} type="tool-getBalanceSheet" />
+                  <ToolContent>
+                    {state === "input-available" && (
+                      <ToolInput input={part.input} />
+                    )}
+                    {state === "output-available" && (
+                      <ToolOutput
+                        errorText={part.errorText}
+                        output={
+                          <Table
+                            data={part.output.rows || []}
+                            caption={`${part.output.symbol} Balance Sheet (${part.output.period})`}
+                            maxRows={8}
+                          />
+                        }
+                      />
+                    )}
+                  </ToolContent>
+                </Tool>
+              );
+            }
+
+            if (type === "tool-getCashFlow") {
+              const { toolCallId, state } = part;
+
+              return (
+                <Tool defaultOpen={true} key={toolCallId}>
+                  <ToolHeader state={state} type="tool-getCashFlow" />
+                  <ToolContent>
+                    {state === "input-available" && (
+                      <ToolInput input={part.input} />
+                    )}
+                    {state === "output-available" && (
+                      <ToolOutput
+                        errorText={part.errorText}
+                        output={
+                          <Table
+                            data={part.output.rows || []}
+                            caption={`${part.output.symbol} Cash Flow (${part.output.period})`}
+                            maxRows={8}
+                          />
+                        }
+                      />
+                    )}
+                  </ToolContent>
+                </Tool>
+              );
+            }
+
+            if (type === "tool-getRatios") {
+              const { toolCallId, state } = part;
+
+              return (
+                <Tool defaultOpen={true} key={toolCallId}>
+                  <ToolHeader state={state} type="tool-getRatios" />
+                  <ToolContent>
+                    {state === "input-available" && (
+                      <ToolInput input={part.input} />
+                    )}
+                    {state === "output-available" && (
+                      <ToolOutput
+                        errorText={part.errorText}
+                        output={
+                          <Table
+                            data={part.output.rows || []}
+                            caption={`${part.output.symbol} Financial Ratios (${part.output.period})`}
+                            maxRows={8}
+                          />
+                        }
+                      />
+                    )}
+                  </ToolContent>
+                </Tool>
+              );
+            }
+
+            if (type === "tool-getKeyMetrics") {
+              const { toolCallId, state } = part;
+
+              return (
+                <Tool defaultOpen={true} key={toolCallId}>
+                  <ToolHeader state={state} type="tool-getKeyMetrics" />
+                  <ToolContent>
+                    {state === "input-available" && (
+                      <ToolInput input={part.input} />
+                    )}
+                    {state === "output-available" && (
+                      <ToolOutput
+                        errorText={part.errorText}
+                        output={
+                          <Table
+                            data={part.output.rows || []}
+                            caption={`${part.output.symbol} Key Metrics (${part.output.period})`}
+                            maxRows={8}
+                          />
+                        }
+                      />
+                    )}
+                  </ToolContent>
+                </Tool>
+              );
+            }
+
+            if (type === "tool-getEnterpriseValues") {
+              const { toolCallId, state } = part;
+
+              return (
+                <Tool defaultOpen={true} key={toolCallId}>
+                  <ToolHeader state={state} type="tool-getEnterpriseValues" />
+                  <ToolContent>
+                    {state === "input-available" && (
+                      <ToolInput input={part.input} />
+                    )}
+                    {state === "output-available" && (
+                      <ToolOutput
+                        errorText={part.errorText}
+                        output={
+                          <Table
+                            data={part.output.rows || []}
+                            caption={`${part.output.symbol} Enterprise Values (${part.output.period})`}
+                            maxRows={8}
+                          />
+                        }
+                      />
+                    )}
+                  </ToolContent>
+                </Tool>
+              );
+            }
+
+            if (type === "tool-getSharesOutstanding") {
+              const { toolCallId, state } = part;
+
+              return (
+                <Tool defaultOpen={true} key={toolCallId}>
+                  <ToolHeader state={state} type="tool-getSharesOutstanding" />
+                  <ToolContent>
+                    {state === "input-available" && (
+                      <ToolInput input={part.input} />
+                    )}
+                    {state === "output-available" && (
+                      <ToolOutput
+                        errorText={part.errorText}
+                        output={
+                          <Table
+                            data={part.output.rows || []}
+                            caption={`${part.output.symbol} Shares Outstanding`}
+                            maxRows={8}
+                          />
+                        }
+                      />
+                    )}
+                  </ToolContent>
+                </Tool>
+              );
+            }
+
+            if (type === "tool-getEarningsCalendar") {
+              const { toolCallId, state } = part;
+
+              return (
+                <Tool defaultOpen={true} key={toolCallId}>
+                  <ToolHeader state={state} type="tool-getEarningsCalendar" />
+                  <ToolContent>
+                    {state === "input-available" && (
+                      <ToolInput input={part.input} />
+                    )}
+                    {state === "output-available" && (
+                      <ToolOutput
+                        errorText={part.errorText}
+                        output={
+                          <Table
+                            data={part.output.rows || []}
+                            caption={`${part.output.symbol} Earnings Calendar`}
+                            maxRows={8}
+                          />
+                        }
+                      />
+                    )}
+                  </ToolContent>
+                </Tool>
+              );
+            }
+
+            if (type === "tool-getFilings") {
+              const { toolCallId, state } = part;
+
+              return (
+                <Tool defaultOpen={true} key={toolCallId}>
+                  <ToolHeader state={state} type="tool-getFilings" />
+                  <ToolContent>
+                    {state === "input-available" && (
+                      <ToolInput input={part.input} />
+                    )}
+                    {state === "output-available" && (
+                      <ToolOutput
+                        errorText={part.errorText}
+                        output={
+                          <Table
+                            data={part.output.rows || []}
+                            caption={`${part.output.symbol} SEC Filings`}
+                            maxRows={10}
+                          />
+                        }
+                      />
+                    )}
+                  </ToolContent>
+                </Tool>
+              );
+            }
+
+            if (type === "tool-getDividends") {
+              const { toolCallId, state } = part;
+
+              return (
+                <Tool defaultOpen={true} key={toolCallId}>
+                  <ToolHeader state={state} type="tool-getDividends" />
+                  <ToolContent>
+                    {state === "input-available" && (
+                      <ToolInput input={part.input} />
+                    )}
+                    {state === "output-available" && (
+                      <ToolOutput
+                        errorText={part.errorText}
+                        output={
+                          part.output.rows && part.output.rows.length > 0 ? (
+                            <Table
+                              data={part.output.rows}
+                              caption={`${part.output.symbol} Dividend History`}
+                              maxRows={10}
+                            />
+                          ) : (
+                            <div className="text-sm text-gray-500 italic">
+                              {part.output.message || 'No dividend history available'}
+                            </div>
                           )
                         }
                       />

@@ -9,6 +9,20 @@ import type { getIncomeStatement } from "./ai/tools/get-income-statement";
 import type { getWeather } from "./ai/tools/get-weather";
 import type { requestSuggestions } from "./ai/tools/request-suggestions";
 import type { updateDocument } from "./ai/tools/update-document";
+import type {
+  searchCompany,
+  getCompanyProfile,
+  getIncomeStatement as getIncomeStatementFMP,
+  getBalanceSheet,
+  getCashFlow,
+  getRatios,
+  getKeyMetrics,
+  getEnterpriseValues,
+  getSharesOutstanding,
+  getEarningsCalendar,
+  getFilings,
+  getDividends,
+} from "./ai/tools/fmp";
 import type { Suggestion } from "./db/schema";
 import type { AppUsage } from "./usage";
 
@@ -31,6 +45,20 @@ type requestSuggestionsTool = InferUITool<
   ReturnType<typeof requestSuggestions>
 >;
 
+// FMP API Tools
+type searchCompanyTool = InferUITool<typeof searchCompany>;
+type getCompanyProfileTool = InferUITool<typeof getCompanyProfile>;
+type getIncomeStatementFMPTool = InferUITool<typeof getIncomeStatementFMP>;
+type getBalanceSheetTool = InferUITool<typeof getBalanceSheet>;
+type getCashFlowTool = InferUITool<typeof getCashFlow>;
+type getRatiosTool = InferUITool<typeof getRatios>;
+type getKeyMetricsTool = InferUITool<typeof getKeyMetrics>;
+type getEnterpriseValuesTool = InferUITool<typeof getEnterpriseValues>;
+type getSharesOutstandingTool = InferUITool<typeof getSharesOutstanding>;
+type getEarningsCalendarTool = InferUITool<typeof getEarningsCalendar>;
+type getFilingsTool = InferUITool<typeof getFilings>;
+type getDividendsTool = InferUITool<typeof getDividends>;
+
 export type ChatTools = {
   getWeather: weatherTool;
   getIncomeStatement: incomeStatementTool;
@@ -40,6 +68,18 @@ export type ChatTools = {
   createDocument: createDocumentTool;
   updateDocument: updateDocumentTool;
   requestSuggestions: requestSuggestionsTool;
+  searchCompany: searchCompanyTool;
+  getCompanyProfile: getCompanyProfileTool;
+  getIncomeStatementFMP: getIncomeStatementFMPTool;
+  getBalanceSheet: getBalanceSheetTool;
+  getCashFlow: getCashFlowTool;
+  getRatios: getRatiosTool;
+  getKeyMetrics: getKeyMetricsTool;
+  getEnterpriseValues: getEnterpriseValuesTool;
+  getSharesOutstanding: getSharesOutstandingTool;
+  getEarningsCalendar: getEarningsCalendarTool;
+  getFilings: getFilingsTool;
+  getDividends: getDividendsTool;
 };
 
 export type CustomUIDataTypes = {
