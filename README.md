@@ -14,182 +14,133 @@
 
 Finance GPT is a conversational AI assistant that fetches real-time financial data and performs sophisticated analysis using tool chaining. Ask about revenue trends, profit margins, growth rates, or any financial metric, and the AI will:
 
-1. **Fetch live data** from Financial Modeling Prep
+1. **Fetch live data** from Financial Modeling Prep API
 2. **Calculate metrics** with step-by-step workings
-3. **Visualize results** with interactive charts
+3. **Visualize results** with interactive tables and charts
 4. **Explain insights** in natural language
 
-Built on a modular architecture with swappable data sources and extensible KPI tools.
+Built on a modular architecture with Redis caching, swappable data sources, and extensible financial tools.
 
-> **Note:** This project is built on top of the [Vercel AI Chatbot](https://github.com/vercel/ai-chatbot) template, extending it with financial analysis capabilities, tool chaining, and real-time data integration.
+> **Note:** This project is built on top of the [Vercel AI Chatbot](https://github.com/vercel/ai-chatbot) template, extending it with comprehensive financial analysis capabilities.
 
-## Financial Tools Architecture
+## Architecture
 
-This application implements a sophisticated financial analysis system using tool chaining and swappable data sources.
-
-### Data Fetching Layer
-
-**`getIncomeStatement`** (`lib/ai/tools/get-income-statement.ts`)
-- Fetches complete income statement data from Financial Modeling Prep API
-- Returns full financial data structure including:
-  - Revenue, Cost of Revenue, Gross Profit
-  - Operating Income, Net Income
-  - All associated ratios (margins, EPS)
-- Supports swappable data sources via `FinancialDataSource` interface
-- Returns structured data optimized for tool chaining
-
-**Architecture Pattern:**
-```typescript
-interface FinancialDataSource {
-  fetchIncomeStatement(ticker: string, period: string): Promise<IncomeStatementRow[]>;
-}
-
-class FMPDataSource implements FinancialDataSource {
-  // FMP API implementation
-}
-
-const dataSource: FinancialDataSource = new FMPDataSource();
-```
-
-This pattern allows easy switching between data providers (FMP, Yahoo Finance, Alpha Vantage, etc.) by implementing the `FinancialDataSource` interface.
-
-### KPI Calculation Layer
-
-**`calculateCAGRTool`** (`lib/ai/tools/kpi/calculate-cagr.ts`)
-- Specialized tool for Compound Annual Growth Rate calculations
-- Shows detailed calculation workings:
-  - Period analyzed (start date → end date)
-  - Starting and ending values
-  - Mathematical formula used
-  - Final CAGR percentage
-- Supports multiple time horizons (3Y, 5Y, 10Y)
-
-**`calculateKPITool`** (`lib/ai/tools/kpi/calculate-kpi.ts`)
-- General-purpose KPI calculator using LLM
-- Handles any financial metric not covered by specialized tools:
-  - Margin analysis (gross, operating, net)
-  - Profitability ratios (ROE, ROIC, ROA)
-  - Efficiency metrics (asset turnover, inventory turnover)
-  - Year-over-year growth rates
-- Receives complete income statement data
-- LLM generates step-by-step calculations with methodology
-
-### Tool Chaining Workflow
+### System Overview
 
 ```
-User Query: "What's Apple's gross margin trend over 5 years?"
+User Query
     ↓
-AI calls getIncomeStatement(ticker: "AAPL")
+AI Model (Tool Selection)
     ↓
-Returns complete income statement with:
-  - Revenue: $391B (2024), $383B (2023)...
-  - Cost of Revenue: $210B (2024)...
-  - Gross Profit: $181B (2024)...
+FMP API Tools (12 endpoints) → Redis Cache → Financial Modeling Prep API
     ↓
-AI calls calculateKPITool(fullData: [...], kpi: "gross margin trend")
+UI Components (Tables, Metric Tiles, Charts)
     ↓
-LLM receives all financial data and calculates:
-  - 2024: 46.2% margin
-  - 2023: 44.1% margin
-  - Trend analysis: +2.1% improvement
-    ↓
-User sees both tools' outputs with detailed workings
+Formatted Response
 ```
 
-### UI Layer
+#### 1. **Caching Layer** (`lib/fmp/cached-fetch.ts`)
+- **Redis-backed caching** with 24-hour default TTL
+- **Exponential backoff retry** (2 attempts, 429/5xx handling)
+- **Performance logging** for monitoring API latency
+- **Versioned cache keys** (`fmp:v1:...`) for easy invalidation
 
-**Income Statement Display** (`components/financial-data.tsx`)
-- Visualizes financial data with interactive charts
-- Supports both legacy string format and new structured data
-- Displays key metrics with trend indicators
-- Renders time series data chronologically
+#### 2. **FMP API Tools** (`lib/ai/tools/fmp/`)
 
-**Tool Output Display** (`components/message.tsx`, `components/elements/tool.tsx`)
-- Collapsible tool cards showing:
-  - Tool name and status (Pending/Running/Completed/Error)
-  - Input parameters
-  - Calculation results with workings
-- Markdown rendering for formatted financial analysis
+**12 Financial Data Tools:**
+- `searchCompany` - Find companies by name/ticker
+- `getCompanyProfile` - Business overview, sector, executives
+- `getIncomeStatementFMP` - Revenue, margins, profitability
+- `getBalanceSheet` - Assets, liabilities, equity
+- `getCashFlow` - Operating/investing/financing activities
+- `getRatios` - 30+ financial ratios (liquidity, profitability, leverage)
+- `getKeyMetrics` - Per-share values, valuation multiples
+- `getEnterpriseValues` - Historical EV calculations
+- `getSharesOutstanding` - Dilution tracking
+- `getEarningsCalendar` - Earnings dates with actual vs estimated
+- `getFilings` - SEC filings (10-K, 10-Q, 8-K)
+- `getDividends` - Historical dividend payments
 
-### System Prompt Design
+**Key Features:**
+- Zod validation with TypeScript inference
+- Normalized JSON output (`rows` array, newest→oldest)
+- Auto-computed metrics (totalDebt, freeCashFlow)
+- Period support (annual/quarter)
 
-The AI is instructed to proactively use financial tools via `financialToolsPrompt`:
-- When to fetch income statement data
-- When to use CAGR vs general KPI tools
-- How to chain tools together
-- Examples of proper tool usage
+#### 3. **KPI Calculation Tools** (`lib/ai/tools/kpi/`)
+- `calculateCAGRTool` - Compound Annual Growth Rate with workings
+- `calculateKPITool` - General-purpose LLM-based calculations
+- `getIncomeStatement` - Legacy tool with swappable data sources
 
-This ensures the AI autonomously:
-1. Identifies financial questions
-2. Fetches required data
-3. Performs calculations with detailed workings
-4. Presents insights to users
+#### 4. **UI Components** (`components/`)
+- **Table.tsx** - Auto-formatting tables with camelCase→Title Case
+- **MetricTile.tsx** - KPI cards with currency/percent/number formatting
+- **MiniChart.tsx** - SVG sparklines and area charts
+- **Tool Display** - Collapsible tool cards with creative loading messages
 
-### Extensibility
+### Tool Chaining Example
 
-**Adding new data sources:**
-```typescript
-class YahooFinanceDataSource implements FinancialDataSource {
-  async fetchIncomeStatement(ticker: string, period: string) {
-    // Implement Yahoo Finance API calls
-  }
-}
-
-// Swap data source
-const dataSource = new YahooFinanceDataSource();
+```
+User: "What's Apple's P/E ratio and revenue growth?"
+    ↓
+AI selects: getKeyMetrics(AAPL) + getIncomeStatementFMP(AAPL)
+    ↓
+Tools execute in parallel (cached if available)
+    ↓
+UI renders: MetricTiles for P/E + Table for revenue trend
+    ↓
+AI synthesizes: "Apple's P/E is 28.5x. Revenue grew 8% YoY..."
 ```
 
-**Adding new KPI tools:**
-Create specialized tools (like `calculateCAGRTool`) for frequently requested metrics to provide deterministic, fast calculations without LLM overhead.
+### Performance Optimizations
 
-## Setup
+1. **Parallel tool execution** - Multiple tools called simultaneously
+2. **Redis caching** - Instant responses for repeated queries
+3. **Tool streaming** - `experimental_toolCallStreaming: true`
+4. **Active tool filtering** - Only relevant tools sent to LLM
+5. **Reduced retry delays** - Faster failures (50ms base delay)
+
+## Quick Start
 
 ### Prerequisites
 
 - Node.js 18+
-- [Financial Modeling Prep API key](https://financialmodelingprep.com/developer/docs/) (free tier available)
-- Vercel account (for AI Gateway and deployment)
+- [FMP API key](https://financialmodelingprep.com/developer/docs/) (free tier: 250 requests/day)
+- Redis (optional, for caching)
 
-### Local Development
+### Setup
 
-1. **Clone and install dependencies**
+1. **Install dependencies**
    ```bash
-   git clone <your-repo-url>
-   cd finance-gpt
-   npm install
+   pnpm install
    ```
 
-2. **Set up environment variables**
-
-   Create a `.env.local` file with the following:
+2. **Environment variables** (`.env.local`)
    ```bash
-   # Financial Modeling Prep API Key
-   FMP_API_KEY=your_fmp_api_key_here
+   # Required
+   FMP_API_KEY=your_fmp_api_key
 
-   # Database (Neon Postgres)
-   DATABASE_URL=your_postgres_connection_string
+   # Optional (for caching)
+   REDIS_URL=redis://localhost:6379
 
-   # Auth
-   AUTH_SECRET=your_auth_secret
-
-   # Storage (Vercel KV for chat history)
-   KV_URL=your_kv_url
-   KV_REST_API_TOKEN=your_kv_token
+   # Database & Auth (see Vercel AI Chatbot template)
+   DATABASE_URL=...
+   AUTH_SECRET=...
    ```
 
-   > **Note:** Don't commit your `.env.local` file. Add it to `.gitignore`.
-
-3. **Run migrations**
+3. **Run migrations & start**
    ```bash
-   npm run db:migrate
+   pnpm db:migrate
+   pnpm dev
    ```
 
-4. **Start development server**
-   ```bash
-   npm run dev
-   ```
+### Test Queries
 
-   The app will be running at [localhost:3000](http://localhost:3000).
+- "Search for Apple"
+- "Show me TSLA's income statement"
+- "What's Microsoft's P/E ratio?"
+- "Get Amazon's cash flow for the last 4 quarters"
+- "Compare Apple and Microsoft's gross profit margins"
 
 ### Deployment
 
