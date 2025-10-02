@@ -6,6 +6,7 @@ import { memo } from "react";
 import type { ChatMessage } from "@/lib/types";
 import { Suggestion } from "./elements/suggestion";
 import type { VisibilityType } from "./visibility-selector";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 type SuggestedActionsProps = {
   chatId: string;
@@ -15,41 +16,41 @@ type SuggestedActionsProps = {
 
 function PureSuggestedActions({ chatId, sendMessage }: SuggestedActionsProps) {
   const suggestedActions = [
-    "What are the advantages of using Next.js?",
-    "Write code to demonstrate Dijkstra's algorithm",
-    "Help me write an essay about Silicon Valley",
-    "What is the weather in San Francisco?",
+    "Summarize Spotify's latest conference call.",
+    "What has Airbnb management said about profitability over the last few earnings calls?",
+    "What was Crowdstrike revenue in the past 3, 5, and 10 years",
+    "What was Crowdstrike's revenue growth in the past 3, 5, and 10 years",
   ];
 
   return (
-    <div
-      className="grid w-full gap-2 sm:grid-cols-2"
-      data-testid="suggested-actions"
-    >
-      {suggestedActions.map((suggestedAction, index) => (
-        <motion.div
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 20 }}
-          initial={{ opacity: 0, y: 20 }}
-          key={suggestedAction}
-          transition={{ delay: 0.05 * index }}
-        >
-          <Suggestion
-            className="h-auto w-full whitespace-normal p-3 text-left"
-            onClick={(suggestion) => {
-              window.history.replaceState({}, "", `/chat/${chatId}`);
-              sendMessage({
-                role: "user",
-                parts: [{ type: "text", text: suggestion }],
-              });
-            }}
-            suggestion={suggestedAction}
+    <ScrollArea className="w-full" data-testid="suggested-actions">
+      <div className="flex gap-2 pb-2">
+        {suggestedActions.map((suggestedAction, index) => (
+          <motion.div
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 20 }}
+            key={suggestedAction}
+            transition={{ delay: 0.05 * index }}
           >
-            {suggestedAction}
-          </Suggestion>
-        </motion.div>
-      ))}
-    </div>
+            <Suggestion
+              className="whitespace-nowrap p-3"
+              onClick={(suggestion) => {
+                window.history.replaceState({}, "", `/chat/${chatId}`);
+                sendMessage({
+                  role: "user",
+                  parts: [{ type: "text", text: suggestion }],
+                });
+              }}
+              suggestion={suggestedAction}
+            >
+              {suggestedAction}
+            </Suggestion>
+          </motion.div>
+        ))}
+      </div>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
   );
 }
 
