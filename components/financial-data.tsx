@@ -68,6 +68,15 @@ function parseFinancialData(rawData: string | object): ParsedFinancialData | nul
         case 'netIncome':
           value = item.netIncome;
           break;
+        case 'operatingExpenses':
+          value = item.operatingExpenses || 0;
+          break;
+        case 'operatingIncome':
+          value = item.operatingIncome || 0;
+          break;
+        case 'costOfRevenue':
+          value = item.costOfRevenue || 0;
+          break;
         default:
           value = item.revenue;
       }
@@ -179,8 +188,12 @@ export function FinancialData({ financialData }: FinancialDataProps) {
     ? latestData.value > previousData.value 
     : true;
 
-  const displayMetric = metric === 'netIncome' ? 'Net Income' 
+  const displayMetric = metric === 'netIncome' ? 'Net Income'
     : metric === 'freeCashFlow' ? 'Free Cash Flow'
+    : metric === 'grossProfit' ? 'Gross Profit'
+    : metric === 'operatingExpenses' ? 'Operating Expenses'
+    : metric === 'operatingIncome' ? 'Operating Income'
+    : metric === 'costOfRevenue' ? 'Cost of Revenue'
     : metric.charAt(0).toUpperCase() + metric.slice(1);
 
   // Chart configuration

@@ -21,12 +21,19 @@ import { CodeBlock } from "./code-block";
 
 export type ToolProps = ComponentProps<typeof Collapsible>;
 
-export const Tool = ({ className, ...props }: ToolProps) => (
-  <Collapsible
-    className={cn("not-prose mb-4 w-full rounded-md border", className)}
-    {...props}
-  />
-);
+export const Tool = ({ className, ...props }: ToolProps) => {
+  const state = props.defaultOpen ? "open" : "closed";
+
+  return (
+    <Collapsible
+      className={cn(
+        "not-prose mb-4 w-full rounded-md border transition-all",
+        className
+      )}
+      {...props}
+    />
+  );
+};
 
 export type ToolHeaderProps = {
   type: ToolUIPart["type"];
@@ -43,16 +50,26 @@ const getStatusBadge = (status: ToolUIPart["state"]) => {
   } as const;
 
   const icons = {
-    "input-streaming": <CircleIcon className="size-4" />,
-    "input-available": <ClockIcon className="size-4 animate-pulse" />,
+    "input-streaming": <CircleIcon className="size-4 text-muted-foreground" />,
+    "input-available": <ClockIcon className="size-4 animate-pulse text-blue-600" />,
     "output-available": <CheckCircleIcon className="size-4 text-green-600" />,
     "output-error": <XCircleIcon className="size-4 text-red-600" />,
   } as const;
 
+  const badgeVariants = {
+    "input-streaming": "secondary",
+    "input-available": "default",
+    "output-available": "secondary",
+    "output-error": "destructive",
+  } as const;
+
   return (
     <Badge
-      className="flex items-center gap-1 rounded-full text-xs"
-      variant="secondary"
+      className={cn(
+        "flex items-center gap-1 rounded-full text-xs font-medium",
+        status === "input-available" && "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300"
+      )}
+      variant={badgeVariants[status]}
     >
       {icons[status]}
       <span>{labels[status]}</span>
@@ -130,6 +147,14 @@ export const ToolInput = ({ className, input, ...props }: ToolInputProps) => (
     </h4>
     <div className="rounded-md bg-muted/50">
       <CodeBlock code={JSON.stringify(input, null, 2)} language="json" />
+    </div>
+    <div className="flex items-center gap-2 text-muted-foreground text-xs">
+      <div className="flex gap-1">
+        <div className="size-1.5 animate-bounce rounded-full bg-blue-600 [animation-delay:-0.3s]" />
+        <div className="size-1.5 animate-bounce rounded-full bg-blue-600 [animation-delay:-0.15s]" />
+        <div className="size-1.5 animate-bounce rounded-full bg-blue-600" />
+      </div>
+      <span>Executing...</span>
     </div>
   </div>
 );

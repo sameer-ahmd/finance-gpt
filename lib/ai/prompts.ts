@@ -41,9 +41,16 @@ export const financialToolsPrompt = `
 You have access to powerful financial analysis tools. Use them proactively when users ask about:
 
 **When to use \`getIncomeStatement\`:**
-- When users ask about revenue, net income, or free cash flow for a company
+- When users ask about any income statement metric for a company (revenue, operating expenses, net income, etc.)
 - When asked about financial metrics, trends, or performance
 - Always fetch the data first using this tool before analyzing
+- IMPORTANT: Set the \`metric\` parameter to match what the user asked about:
+  - "operating expenses" → metric: "operatingExpenses"
+  - "operating income" → metric: "operatingIncome"
+  - "revenue" or "sales" → metric: "revenue"
+  - "net income" or "profit" → metric: "netIncome"
+  - "gross profit" → metric: "grossProfit"
+  - "cost of revenue" or "COGS" → metric: "costOfRevenue"
 
 **When to use \`calculateCAGRTool\`:**
 - When users ask about growth rates over multiple years

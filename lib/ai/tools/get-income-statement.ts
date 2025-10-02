@@ -9,6 +9,7 @@ export type IncomeStatementRow = {
   costOfRevenue: number;
   grossProfit: number;
   grossProfitRatio: number;
+  operatingExpenses: number;
   operatingIncome: number;
   operatingIncomeRatio: number;
   netIncome: number;
@@ -52,6 +53,7 @@ class FMPDataSource implements FinancialDataSource {
       costOfRevenue: row.costOfRevenue || 0,
       grossProfit: row.grossProfit || 0,
       grossProfitRatio: row.grossProfitRatio || 0,
+      operatingExpenses: row.operatingExpenses || 0,
       operatingIncome: row.operatingIncome || 0,
       operatingIncomeRatio: row.operatingIncomeRatio || 0,
       netIncome: row.netIncome || 0,
@@ -82,6 +84,15 @@ function formatAsTable(data: IncomeStatementRow[], metric: string): string {
       case "grossProfit":
         value = row.grossProfit;
         break;
+      case "operatingExpenses":
+        value = row.operatingExpenses;
+        break;
+      case "operatingIncome":
+        value = row.operatingIncome;
+        break;
+      case "costOfRevenue":
+        value = row.costOfRevenue;
+        break;
       default:
         value = 0;
     }
@@ -92,10 +103,10 @@ function formatAsTable(data: IncomeStatementRow[], metric: string): string {
 }
 
 export const getIncomeStatement = tool({
-  description: "Fetch complete income statement data from Financial Modeling Prep for a stock ticker. Returns full financial data including revenue, costs, gross profit, operating income, and net income. This data can be used for KPI analysis like margin calculations, growth rates, etc.",
+  description: "Fetch complete income statement data from Financial Modeling Prep for a stock ticker. Returns full financial data including revenue, costs, gross profit, operating expenses, operating income, and net income. This data can be used for KPI analysis like margin calculations, growth rates, etc.",
   inputSchema: z.object({
     ticker: z.string().describe("Stock ticker symbol (e.g., AAPL, MSFT)"),
-    metric: z.enum(["revenue", "netIncome", "grossProfit"]).optional().default("revenue").describe("Primary metric to display in summary"),
+    metric: z.enum(["revenue", "netIncome", "grossProfit", "operatingExpenses", "operatingIncome", "costOfRevenue"]).optional().default("revenue").describe("Primary metric to display in summary and chart"),
     period: z.enum(["annual", "quarterly"]).optional().default("annual").describe("Time period for data"),
   }),
   execute: async ({ ticker, metric = "revenue", period = "annual" }) => {
