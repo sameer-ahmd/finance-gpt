@@ -1,70 +1,200 @@
-<a href="https://chat.vercel.ai/">
-  <img alt="Next.js 14 and App Router-ready AI chatbot." src="app/(chat)/opengraph-image.png">
-  <h1 align="center">Chat SDK</h1>
-</a>
+<h1 align="center">Finance GPT</h1>
 
 <p align="center">
-    Chat SDK is a free, open-source template built with Next.js and the AI SDK that helps you quickly build powerful chatbot applications.
+    An AI-powered financial analysis chatbot built with Next.js, the AI SDK, and real-time financial data.
 </p>
 
 <p align="center">
-  <a href="https://chat-sdk.dev"><strong>Read Docs</strong></a> ·
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#model-providers"><strong>Model Providers</strong></a> ·
-  <a href="#deploy-your-own"><strong>Deploy Your Own</strong></a> ·
-  <a href="#running-locally"><strong>Running locally</strong></a>
+  Ask questions about company financials, get KPI calculations with detailed workings, and analyze trends—all through natural language.
 </p>
+
 <br/>
 
-## Features
+## Overview
 
-- [Next.js](https://nextjs.org) App Router
-  - Advanced routing for seamless navigation and performance
-  - React Server Components (RSCs) and Server Actions for server-side rendering and increased performance
-- [AI SDK](https://ai-sdk.dev/docs/introduction)
-  - Unified API for generating text, structured objects, and tool calls with LLMs
-  - Hooks for building dynamic chat and generative user interfaces
-  - Supports xAI (default), OpenAI, Fireworks, and other model providers
-- [shadcn/ui](https://ui.shadcn.com)
-  - Styling with [Tailwind CSS](https://tailwindcss.com)
-  - Component primitives from [Radix UI](https://radix-ui.com) for accessibility and flexibility
-- Data Persistence
-  - [Neon Serverless Postgres](https://vercel.com/marketplace/neon) for saving chat history and user data
-  - [Vercel Blob](https://vercel.com/storage/blob) for efficient file storage
-- [Auth.js](https://authjs.dev)
-  - Simple and secure authentication
+Finance GPT is a conversational AI assistant that fetches real-time financial data and performs sophisticated analysis using tool chaining. Ask about revenue trends, profit margins, growth rates, or any financial metric, and the AI will:
 
-## Model Providers
+1. **Fetch live data** from Financial Modeling Prep
+2. **Calculate metrics** with step-by-step workings
+3. **Visualize results** with interactive charts
+4. **Explain insights** in natural language
 
-This template uses the [Vercel AI Gateway](https://vercel.com/docs/ai-gateway) to access multiple AI models through a unified interface. The default configuration includes [xAI](https://x.ai) models (`grok-2-vision-1212`, `grok-3-mini`) routed through the gateway.
+Built on a modular architecture with swappable data sources and extensible KPI tools.
 
-### AI Gateway Authentication
+> **Note:** This project is built on top of the [Vercel AI Chatbot](https://github.com/vercel/ai-chatbot) template, extending it with financial analysis capabilities, tool chaining, and real-time data integration.
 
-**For Vercel deployments**: Authentication is handled automatically via OIDC tokens.
+## Financial Tools Architecture
 
-**For non-Vercel deployments**: You need to provide an AI Gateway API key by setting the `AI_GATEWAY_API_KEY` environment variable in your `.env.local` file.
+This application implements a sophisticated financial analysis system using tool chaining and swappable data sources.
 
-With the [AI SDK](https://ai-sdk.dev/docs/introduction), you can also switch to direct LLM providers like [OpenAI](https://openai.com), [Anthropic](https://anthropic.com), [Cohere](https://cohere.com/), and [many more](https://ai-sdk.dev/providers/ai-sdk-providers) with just a few lines of code.
+### Data Fetching Layer
 
-## Deploy Your Own
+**`getIncomeStatement`** (`lib/ai/tools/get-income-statement.ts`)
+- Fetches complete income statement data from Financial Modeling Prep API
+- Returns full financial data structure including:
+  - Revenue, Cost of Revenue, Gross Profit
+  - Operating Income, Net Income
+  - All associated ratios (margins, EPS)
+- Supports swappable data sources via `FinancialDataSource` interface
+- Returns structured data optimized for tool chaining
 
-You can deploy your own version of the Next.js AI Chatbot to Vercel with one click:
+**Architecture Pattern:**
+```typescript
+interface FinancialDataSource {
+  fetchIncomeStatement(ticker: string, period: string): Promise<IncomeStatementRow[]>;
+}
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/templates/next.js/nextjs-ai-chatbot)
+class FMPDataSource implements FinancialDataSource {
+  // FMP API implementation
+}
 
-## Running locally
-
-You will need to use the environment variables [defined in `.env.example`](.env.example) to run Next.js AI Chatbot. It's recommended you use [Vercel Environment Variables](https://vercel.com/docs/projects/environment-variables) for this, but a `.env` file is all that is necessary.
-
-> Note: You should not commit your `.env` file or it will expose secrets that will allow others to control access to your various AI and authentication provider accounts.
-
-1. Install Vercel CLI: `npm i -g vercel`
-2. Link local instance with Vercel and GitHub accounts (creates `.vercel` directory): `vercel link`
-3. Download your environment variables: `vercel env pull`
-
-```bash
-pnpm install
-pnpm dev
+const dataSource: FinancialDataSource = new FMPDataSource();
 ```
 
-Your app template should now be running on [localhost:3000](http://localhost:3000).
+This pattern allows easy switching between data providers (FMP, Yahoo Finance, Alpha Vantage, etc.) by implementing the `FinancialDataSource` interface.
+
+### KPI Calculation Layer
+
+**`calculateCAGRTool`** (`lib/ai/tools/kpi/calculate-cagr.ts`)
+- Specialized tool for Compound Annual Growth Rate calculations
+- Shows detailed calculation workings:
+  - Period analyzed (start date → end date)
+  - Starting and ending values
+  - Mathematical formula used
+  - Final CAGR percentage
+- Supports multiple time horizons (3Y, 5Y, 10Y)
+
+**`calculateKPITool`** (`lib/ai/tools/kpi/calculate-kpi.ts`)
+- General-purpose KPI calculator using LLM
+- Handles any financial metric not covered by specialized tools:
+  - Margin analysis (gross, operating, net)
+  - Profitability ratios (ROE, ROIC, ROA)
+  - Efficiency metrics (asset turnover, inventory turnover)
+  - Year-over-year growth rates
+- Receives complete income statement data
+- LLM generates step-by-step calculations with methodology
+
+### Tool Chaining Workflow
+
+```
+User Query: "What's Apple's gross margin trend over 5 years?"
+    ↓
+AI calls getIncomeStatement(ticker: "AAPL")
+    ↓
+Returns complete income statement with:
+  - Revenue: $391B (2024), $383B (2023)...
+  - Cost of Revenue: $210B (2024)...
+  - Gross Profit: $181B (2024)...
+    ↓
+AI calls calculateKPITool(fullData: [...], kpi: "gross margin trend")
+    ↓
+LLM receives all financial data and calculates:
+  - 2024: 46.2% margin
+  - 2023: 44.1% margin
+  - Trend analysis: +2.1% improvement
+    ↓
+User sees both tools' outputs with detailed workings
+```
+
+### UI Layer
+
+**Income Statement Display** (`components/financial-data.tsx`)
+- Visualizes financial data with interactive charts
+- Supports both legacy string format and new structured data
+- Displays key metrics with trend indicators
+- Renders time series data chronologically
+
+**Tool Output Display** (`components/message.tsx`, `components/elements/tool.tsx`)
+- Collapsible tool cards showing:
+  - Tool name and status (Pending/Running/Completed/Error)
+  - Input parameters
+  - Calculation results with workings
+- Markdown rendering for formatted financial analysis
+
+### System Prompt Design
+
+The AI is instructed to proactively use financial tools via `financialToolsPrompt`:
+- When to fetch income statement data
+- When to use CAGR vs general KPI tools
+- How to chain tools together
+- Examples of proper tool usage
+
+This ensures the AI autonomously:
+1. Identifies financial questions
+2. Fetches required data
+3. Performs calculations with detailed workings
+4. Presents insights to users
+
+### Extensibility
+
+**Adding new data sources:**
+```typescript
+class YahooFinanceDataSource implements FinancialDataSource {
+  async fetchIncomeStatement(ticker: string, period: string) {
+    // Implement Yahoo Finance API calls
+  }
+}
+
+// Swap data source
+const dataSource = new YahooFinanceDataSource();
+```
+
+**Adding new KPI tools:**
+Create specialized tools (like `calculateCAGRTool`) for frequently requested metrics to provide deterministic, fast calculations without LLM overhead.
+
+## Setup
+
+### Prerequisites
+
+- Node.js 18+
+- [Financial Modeling Prep API key](https://financialmodelingprep.com/developer/docs/) (free tier available)
+- Vercel account (for AI Gateway and deployment)
+
+### Local Development
+
+1. **Clone and install dependencies**
+   ```bash
+   git clone <your-repo-url>
+   cd finance-gpt
+   npm install
+   ```
+
+2. **Set up environment variables**
+
+   Create a `.env.local` file with the following:
+   ```bash
+   # Financial Modeling Prep API Key
+   FMP_API_KEY=your_fmp_api_key_here
+
+   # Database (Neon Postgres)
+   DATABASE_URL=your_postgres_connection_string
+
+   # Auth
+   AUTH_SECRET=your_auth_secret
+
+   # Storage (Vercel KV for chat history)
+   KV_URL=your_kv_url
+   KV_REST_API_TOKEN=your_kv_token
+   ```
+
+   > **Note:** Don't commit your `.env.local` file. Add it to `.gitignore`.
+
+3. **Run migrations**
+   ```bash
+   npm run db:migrate
+   ```
+
+4. **Start development server**
+   ```bash
+   npm run dev
+   ```
+
+   The app will be running at [localhost:3000](http://localhost:3000).
+
+### Deployment
+
+Deploy to Vercel with one click:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/finance-gpt)
+
+Make sure to add all environment variables in your Vercel project settings.
