@@ -5,7 +5,6 @@ import {
   JsonToSseTransformStream,
   smoothStream,
   streamText,
-  stepCountIs,
 } from "ai";
 import { unstable_cache as cache } from "next/cache";
 import { after } from "next/server";
@@ -193,7 +192,6 @@ export async function POST(request: Request) {
           model: myProvider.languageModel(selectedChatModel),
           system: systemPrompt({ selectedChatModel, requestHints }),
           messages: convertToModelMessages(uiMessages),
-          stopWhen: stepCountIs(3),
           experimental_transform: smoothStream({ chunking: "word" }),
           tools: {
             getIncomeStatement,
