@@ -16,6 +16,7 @@ type SuggestedActionsProps = {
 
 function PureSuggestedActions({ chatId, sendMessage }: SuggestedActionsProps) {
   const suggestedActions = [
+    "Summarize Apple's latest 10-K filing.",
     "Summarize Spotify's latest conference call.",
     "What has Airbnb management said about profitability over the last few earnings calls?",
     "What was Crowdstrike revenue in the past 3, 5, and 10 years",

@@ -24,12 +24,9 @@ import { type RequestHints, systemPrompt } from "@/lib/ai/prompts";
 import { myProvider } from "@/lib/ai/providers";
 import { calculateCAGRTool } from "@/lib/ai/tools/kpi/calculate-cagr";
 import { calculateKPITool } from "@/lib/ai/tools/kpi/calculate-kpi";
-import { createDocument } from "@/lib/ai/tools/create-document";
 import { getEarningsTranscript } from "@/lib/ai/tools/get-earnings-transcript";
 import { getIncomeStatement } from "@/lib/ai/tools/get-income-statement";
 import { getWeather } from "@/lib/ai/tools/get-weather";
-import { requestSuggestions } from "@/lib/ai/tools/request-suggestions";
-import { updateDocument } from "@/lib/ai/tools/update-document";
 import {
   searchCompany,
   getCompanyProfile,
@@ -197,32 +194,7 @@ export async function POST(request: Request) {
           model: myProvider.languageModel(selectedChatModel),
           system: systemPrompt({ selectedChatModel, requestHints }),
           messages: convertToModelMessages(uiMessages),
-          stopWhen: stepCountIs(5),
-          experimental_activeTools:
-            selectedChatModel === "chat-model-reasoning"
-              ? []
-              : [
-                  "getWeather",
-                  "getIncomeStatement",
-                  "getEarningsTranscript",
-                  "calculateCAGRTool",
-                  "calculateKPITool",
-                  "createDocument",
-                  "updateDocument",
-                  "requestSuggestions",
-                  "searchCompany",
-                  "getCompanyProfile",
-                  "getIncomeStatementFMP",
-                  "getBalanceSheet",
-                  "getCashFlow",
-                  "getRatios",
-                  "getKeyMetrics",
-                  "getEnterpriseValues",
-                  "getSharesOutstanding",
-                  "getEarningsCalendar",
-                  "getFilings",
-                  "getDividends",
-                ],
+          stopWhen: stepCountIs(3),
           experimental_transform: smoothStream({ chunking: "word" }),
           tools: {
             getWeather,
@@ -230,12 +202,6 @@ export async function POST(request: Request) {
             getEarningsTranscript,
             calculateCAGRTool,
             calculateKPITool,
-            createDocument: createDocument({ session, dataStream }),
-            updateDocument: updateDocument({ session, dataStream }),
-            requestSuggestions: requestSuggestions({
-              session,
-              dataStream,
-            }),
             searchCompany,
             getCompanyProfile,
             getIncomeStatementFMP,
