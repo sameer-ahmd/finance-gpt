@@ -6,7 +6,7 @@ import { useMessages } from "@/hooks/use-messages";
 import type { Vote } from "@/lib/db/schema";
 import type { ChatMessage } from "@/lib/types";
 import type { UIArtifact } from "./artifact";
-import { PreviewMessage, ThinkingMessage } from "./message";
+import { PreviewMessage, LoadingMessage } from "./message";
 
 type ArtifactMessagesProps = {
   chatId: string;
@@ -65,7 +65,7 @@ function PureArtifactMessages({
 
       {status === "submitted" &&
         messages.length > 0 &&
-        messages.at(-1)?.role === "user" && <ThinkingMessage />}
+        messages.at(-1)?.role === "user" && <LoadingMessage />}
 
       <motion.div
         className="min-h-[24px] min-w-[24px] shrink-0"

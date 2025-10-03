@@ -8,7 +8,7 @@ import type { ChatMessage } from "@/lib/types";
 import { useDataStream } from "./data-stream-provider";
 import { Conversation, ConversationContent } from "./elements/conversation";
 import { Greeting } from "./greeting";
-import { PreviewMessage, ThinkingMessage } from "./message";
+import { PreviewMessage, LoadingMessage } from "./message";
 
 type MessagesProps = {
   chatId: string;
@@ -92,8 +92,7 @@ function PureMessages({
 
           {status === "submitted" &&
             messages.length > 0 &&
-            messages.at(-1)?.role === "user" &&
-            selectedModelId !== "chat-model-reasoning" && <ThinkingMessage />}
+            messages.at(-1)?.role === "user" && <LoadingMessage />}
 
           <div
             className="min-h-[24px] min-w-[24px] shrink-0"

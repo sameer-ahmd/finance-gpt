@@ -14,6 +14,7 @@ import { MessageActions } from "./message-actions";
 import { MessageEditor } from "./message-editor";
 import { MessageReasoning } from "./message-reasoning";
 import { PreviewAttachment } from "./preview-attachment";
+import { TypingAnimation } from "./typing-animation";
 import {
   IncomeStatementTool,
   EarningsTranscriptTool,
@@ -237,7 +238,7 @@ export const PreviewMessage = memo(
   }
 );
 
-export const ThinkingMessage = () => {
+export const LoadingMessage = () => {
   const role = "assistant";
 
   return (
@@ -255,33 +256,10 @@ export const ThinkingMessage = () => {
 
         <div className="flex w-full flex-col gap-2 md:gap-4">
           <div className="p-0 text-muted-foreground text-sm">
-            <LoadingText>Thinking...</LoadingText>
+            <TypingAnimation />
           </div>
         </div>
       </div>
-    </motion.div>
-  );
-};
-
-const LoadingText = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <motion.div
-      animate={{ backgroundPosition: ["100% 50%", "-100% 50%"] }}
-      className="flex items-center text-transparent"
-      style={{
-        background:
-          "linear-gradient(90deg, hsl(var(--muted-foreground)) 0%, hsl(var(--muted-foreground)) 35%, hsl(var(--foreground)) 50%, hsl(var(--muted-foreground)) 65%, hsl(var(--muted-foreground)) 100%)",
-        backgroundSize: "200% 100%",
-        WebkitBackgroundClip: "text",
-        backgroundClip: "text",
-      }}
-      transition={{
-        duration: 1.5,
-        repeat: Number.POSITIVE_INFINITY,
-        ease: "linear",
-      }}
-    >
-      {children}
     </motion.div>
   );
 };
