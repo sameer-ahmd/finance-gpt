@@ -79,8 +79,6 @@ const getStatusBadge = (status: ToolUIPart["state"]) => {
 
 const getToolDisplayName = (type: ToolUIPart["type"]) => {
   switch (type) {
-    case "tool-getWeather":
-      return "Weather Data";
     case "tool-getIncomeStatement":
       return "Income Statement";
     case "tool-getEarningsTranscript":
@@ -89,12 +87,6 @@ const getToolDisplayName = (type: ToolUIPart["type"]) => {
       return "CAGR Analysis";
     case "tool-calculateKPITool":
       return "KPI Calculation";
-    case "tool-createDocument":
-      return "Create Document";
-    case "tool-updateDocument":
-      return "Update Document";
-    case "tool-requestSuggestions":
-      return "Request Suggestions";
     // FMP API Tools
     case "tool-searchCompany":
       return "Company Search";

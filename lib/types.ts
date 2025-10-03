@@ -3,12 +3,8 @@ import { z } from "zod";
 import type { ArtifactKind } from "@/components/artifact";
 import type { calculateCAGRTool } from "./ai/tools/kpi/calculate-cagr";
 import type { calculateKPITool } from "./ai/tools/kpi/calculate-kpi";
-import type { createDocument } from "./ai/tools/create-document";
 import type { getEarningsTranscript } from "./ai/tools/get-earnings-transcript";
 import type { getIncomeStatement } from "./ai/tools/get-income-statement";
-import type { getWeather } from "./ai/tools/get-weather";
-import type { requestSuggestions } from "./ai/tools/request-suggestions";
-import type { updateDocument } from "./ai/tools/update-document";
 import type {
   searchCompany,
   getCompanyProfile,
@@ -34,16 +30,10 @@ export const messageMetadataSchema = z.object({
 
 export type MessageMetadata = z.infer<typeof messageMetadataSchema>;
 
-type weatherTool = InferUITool<typeof getWeather>;
 type incomeStatementTool = InferUITool<typeof getIncomeStatement>;
 type earningsTranscriptTool = InferUITool<typeof getEarningsTranscript>;
 type calculateCAGRToolType = InferUITool<typeof calculateCAGRTool>;
 type calculateKPIToolType = InferUITool<typeof calculateKPITool>;
-type createDocumentTool = InferUITool<ReturnType<typeof createDocument>>;
-type updateDocumentTool = InferUITool<ReturnType<typeof updateDocument>>;
-type requestSuggestionsTool = InferUITool<
-  ReturnType<typeof requestSuggestions>
->;
 
 // FMP API Tools
 type searchCompanyTool = InferUITool<typeof searchCompany>;
@@ -60,14 +50,10 @@ type getFilingsTool = InferUITool<typeof getFilings>;
 type getDividendsTool = InferUITool<typeof getDividends>;
 
 export type ChatTools = {
-  getWeather: weatherTool;
   getIncomeStatement: incomeStatementTool;
   getEarningsTranscript: earningsTranscriptTool;
   calculateCAGRTool: calculateCAGRToolType;
   calculateKPITool: calculateKPIToolType;
-  createDocument: createDocumentTool;
-  updateDocument: updateDocumentTool;
-  requestSuggestions: requestSuggestionsTool;
   searchCompany: searchCompanyTool;
   getCompanyProfile: getCompanyProfileTool;
   getIncomeStatementFMP: getIncomeStatementFMPTool;
