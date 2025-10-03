@@ -21,8 +21,8 @@ export const myProvider = isTestEnvironment
     })()
   : customProvider({
       languageModels: {
-        "chat-model": gateway.languageModel("openai/gpt-5"),
-        "title-model": gateway.languageModel("openai/gpt-5"),
-        "artifact-model": gateway.languageModel("openai/gpt-5"),
+        "chat-model": gateway.languageModel("openai/gpt-4.1"),
+        "title-model": gateway.languageModel("openai/gpt-4.1"),
+        "artifact-model": gateway.languageModel("openai/gpt-4.1"),
       },
     });
