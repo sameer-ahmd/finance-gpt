@@ -192,6 +192,13 @@ export async function POST(request: Request) {
           model: myProvider.languageModel(selectedChatModel),
           system: systemPrompt({ selectedChatModel, requestHints }),
           messages: convertToModelMessages(uiMessages),
+          stopWhen: ({ steps }) => {
+            // Stop when the last step doesn't contain tool results
+            return (
+              !steps.at(-1)?.toolResults ||
+              steps.at(-1)?.toolResults.length === 0
+            );
+          },
           experimental_transform: smoothStream({ chunking: "word" }),
           tools: {
             getIncomeStatement,
